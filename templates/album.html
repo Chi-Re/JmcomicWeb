@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>漫画信息展示页</title>
+    <!-- 可选，添加样式表 -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .info-section {
+            margin-bottom: 20px;
+        }
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            padding: 5px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+        .tag {
+            background-color: grey;
+            color: #FFF;
+            padding: 3px 7px;
+            border-radius: 3px;
+        }
+
+                .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        a {
+            text-decoration:none;
+        }
+        img.cover-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin-bottom: 1rem;
+        }
+    </style>
+
+      <style>
+        /* 这里是CSS样式，用于美化按钮 */
+        .my-button {
+            background-color: #4CAF50; /* 设置背景颜色 */
+            border: none; /* 去除边框 */
+            color: white; /* 文字颜色 */
+            padding: 15px 32px; /* 内边距，调整按钮大小 */
+            text-align: center; /* 文字居中显示 */
+            text-decoration: none; /* 去除下划线等装饰 */
+            display: inline-block; /* 使其以行内块元素显示 */
+            font-size: 16px; /* 设置字体大小 */
+            margin: 4px 2px; /* 外边距，设置按钮之间的间距 */
+            cursor: pointer; /* 鼠标悬停时变为小手形状 */
+            transition: background-color 0.3s ease; /* 添加过渡效果，鼠标点击时颜色变化更平滑 */
+        }
+
+        .my-button:hover {
+            background-color: #45a049; /* 鼠标悬停时背景颜色的变化 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 封面部分 -->
+        <section class="info-section">
+            <div align="center">
+              <img class="cover-image" src="{{ photo_content.cover }}"
+               style="width: 547px; height: 484px;">
+            <!-- 其他漫画信息，如作者、简介等可以继续添加在这里 -->
+            <h4>{{ photo_content.title }}</h4>
+            </div>
+
+        </section>
+
+        <!-- 作者部分 -->
+        <section class="info-section">
+            <h5>漫画作者：{{ photo_content.author }}</h5>
+            <h5>{{ photo_content.description }}</h5>
+        </section>
+
+        <!-- 标签部分 -->
+        <section class="info-section">
+            <h5>标签：</h5>
+            <div class="tags">
+                {% for g in photo_content.genre %}
+                    <a href="/search/photos?search={{ g }}&page=1"><span class="tag">{{ g }}</span></a>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="info-section">
+            <a href="/photo/{{ photo_content.id }}"><button class="my-button">开始阅读</button></a>
+        </section>
+    </div>
+</body>
+</html>
