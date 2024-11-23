@@ -29,18 +29,30 @@ def photo(photo_id: int):
 @app.route("/album/<photo_id>")
 def album(photo_id: int):
 
-    photo_text = client.req_api("/album", params={
-        "id": photo_id
-    }).res_data
+    # photo_text = client.req_api("/album", params={
+    #     "id": photo_id
+    # }).res_data
+    #
+    # photo_content = {
+    #     "id": photo_id,
+    #     "title": photo_text['name'],
+    #     "description": photo_text['description'],
+    #     "cover": f"https://{client.domain_list[0]}/media/albums/{photo_id}.jpg",
+    #     "author": photo_text['author'],  # 作者
+    #     "genre": photo_text['tags'],  # 标签
+    #     "page_count": len(photo_text['images'])  # 页数
+    # }
+
+    photo_text = client.get_album_detail(photo_id)
 
     photo_content = {
         "id": photo_id,
-        "title": photo_text['name'],
-        "description": photo_text['description'],
+        "title": photo_text.name,
+        # "description": photo_text['description'],
         "cover": f"https://{client.domain_list[0]}/media/albums/{photo_id}.jpg",
-        "author": photo_text['author'],  # 作者
-        "genre": photo_text['tags'],  # 标签
-        "page_count": len(photo_text['images'])  # 页数
+        "author": photo_text.authors,  # 作者
+        "genre": photo_text.tags,  # 标签
+        "page_count": int(photo_text.page_count)  # 页数
     }
 
     return render_template("album.html", photo_content=photo_content)
