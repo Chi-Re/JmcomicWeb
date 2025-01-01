@@ -2,11 +2,87 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>漫画内容-{{ photos.title }}</title>
+    <style>
+        /* 样式开始 */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f4f4f4;
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #ddd;
+            z-index: 1000;
+        }
+        .bottom-bar a {
+            flex: 1;
+            text-align: center;
+            color: black;
+            text-decoration: none;
+            padding: 10px;
+            margin: 0 5px;
+            background-color: #ddd;
+            border-radius: 5px;
+            transition: background-color 0.3s ease-in-out;
+        }
+        .bottom-bar a:hover,
+        .bottom-bar a:focus {
+            background-color: #bbb;
+        }
+
+        /* 移动端优化 */
+        @media (max-width: 768px) {
+            .bottom-bar a {
+                font-size: 0.9rem;
+                padding: 12px;
+            }
+        }
+        /* 样式结束 */
+    </style>
 </head>
 <body>
-{% for p in photos %}
-    <img src="{{ p }}">
-{% endfor %}
+    {% for p in photos %}
+        <img src="/photo/get_photos?url={{ p.img_url }}" alt="漫画图片" style="max-width: 100%;">
+    {% endfor %}
+
+    <!-- 底部按钮栏 -->
+    <div class="bottom-bar">
+        <a href="#" id="bookmark-btn">收藏</a>
+        <a href="/album/{{ photo_id }}">详情</a>
+    </div>
+
+    <script>
+       async function sendPostRequest(url) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                alert('已成功收藏！');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('收藏失败，请检查登陆或jm号。');
+            }
+        }
+
+        document.getElementById('bookmark-btn').addEventListener('click', function(event) {
+            event.preventDefault(); // 防止默认行为（即页面跳转）
+
+            // 调用发送POST请求的函数
+            sendPostRequest('/favorites/add/{{ photo_id }}');
+        });
+    </script>
 </body>
 </html>

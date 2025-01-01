@@ -16,14 +16,22 @@ def index():
 
 @app.route("/photo/<photo_id>")
 def photo(photo_id: int):
-    photo = client.get_photo_detail(photo_id, False)
+    try:
+        photos = client.get_photo_detail(photo_id, False)
+    except MissingAlbumPhotoException:
+        return """
+        MissingAlbumPhotoException: 请求的本子不存在！
+        原因可能为:
+        1. id有误，检查你的本子id
+        2. 该漫画只对登录用户可见
+        """
 
-    return_photos = []
+    # return_photos = []
+    #
+    # for p in photos:
+    #     return_photos.append(f"/photo/get_photos?url={p.img_url}")
 
-    for p in photo:
-        return_photos.append(f"/photo/get_photos?url={p.img_url}")
-
-    return render_template("photo.html", photos=return_photos)
+    return render_template("photo.html", photos=photos, photo_id=photo_id)
 
 
 @app.route("/album/<photo_id>")
@@ -94,6 +102,19 @@ def favorites():
         return "∑(っ°Д°;)っ卧槽，报错了"
 
     return render_template("search.html", photos=photo_list, page=page, url='/favorites')
+
+
+@app.route("/favorites/add/<photo_id>", methods=['POST'])
+def add_favorites(photo_id: int):
+    print(photo_id)
+    try:
+        client.add_favorite_album(photo_id)
+    except ResponseUnexpectedException:
+        return {"code": 401, "errorMsg": "請先登入會員"}
+
+    return {
+        "id": photo_id
+    }
 
 
 @app.route("/photo/get_photos", methods=['POST', "GET"])
