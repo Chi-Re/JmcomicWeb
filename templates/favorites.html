@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>漫画列表网站</title>
+    <style>
+        /* styles.css */
+/* 全局重置与基本样式 */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+}
+
+header h1 {
+    margin: 0;
+}
+
+nav ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+}
+
+nav li {
+    margin: 0 1rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+}
+
+/* 漫画列表区域 */
+.comics-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.comic-card {
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.comic-cover {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.comic-card h2 {
+    margin: 0.5rem 0;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.comic-card p {
+    margin: 0.5rem 0;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.read-more {
+    display: block;
+    text-align: center;
+    background-color: #007bff;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 3px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.read-more:hover {
+    background-color: #0056b3;
+}
+    </style>
+
+        <style>
+        .page-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: fit-content;
+        }
+        .page-input {
+            width: 50px;
+            padding: 5px;
+            text-align: center;
+        }
+        footer {
+            color: #333;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        footer form{
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <section class="comics-list">
+
+            {% for ps in photos %}
+                <article class="comic-card">
+                    <img src="{{ ps.cover }}" alt="漫画封面1" class="comic-cover">
+                    <h2>{{ ps.title }}</h2>
+                    <p>作者：暂未支持</p>
+                    <p>简介：暂未支持</p>
+                    <a href="/album/{{ ps.id }}" class="read-more">查看信息</a>
+                </article>
+            {% endfor %}
+
+            <!-- 更多漫画卡片... -->
+        </section>
+    </main>
+
+    <!-- 页码控制区域 -->
+    <footer>
+        <form action="{{ url }}?page=1" method = "POST" >
+            <button>首页</button>
+        </form>
+        {% if page != 1 %}
+            <form action="{{ url }}?page={{page-1}}" method = "POST">
+                <button>上一页</button>
+            </form>
+        {% endif %}
+        <form action="{{ url }}?page={{page+1}}" method = "POST">
+            <button>下一页</button>
+        </form>
+    </footer>
+</body>
+</html>

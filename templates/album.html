@@ -93,7 +93,12 @@
 
         <!-- 作者部分 -->
         <section class="info-section">
-            <h5>漫画作者：{{ photo_content.author }}</h5>
+            <h5>漫画作者：</h5>
+            <div class="tags">
+                {% for a in photo_content.author %}
+                    <a href="/search/photos?search={{ a }}&page=1"><span class="tag">{{ a }}</span></a>
+                {% endfor %}
+            </div>
             <h5>{{ photo_content.description }}</h5>
         </section>
 

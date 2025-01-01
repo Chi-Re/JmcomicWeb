@@ -28,32 +28,31 @@ def photo(photo_id: int):
 
 @app.route("/album/<photo_id>")
 def album(photo_id: int):
-
-    # photo_text = client.req_api("/album", params={
-    #     "id": photo_id
-    # }).res_data
-    #
-    # photo_content = {
-    #     "id": photo_id,
-    #     "title": photo_text['name'],
-    #     "description": photo_text['description'],
-    #     "cover": f"https://{client.domain_list[0]}/media/albums/{photo_id}.jpg",
-    #     "author": photo_text['author'],  # 作者
-    #     "genre": photo_text['tags'],  # 标签
-    #     "page_count": len(photo_text['images'])  # 页数
-    # }
-
-    photo_text = client.get_album_detail(photo_id)
+    photo_text = client.req_api("/album", params={
+        "id": photo_id
+    }).res_data
 
     photo_content = {
         "id": photo_id,
-        "title": photo_text.name,
-        # "description": photo_text['description'],
+        "title": photo_text['name'],
+        "description": photo_text['description'],
         "cover": f"https://{client.domain_list[0]}/media/albums/{photo_id}.jpg",
-        "author": photo_text.authors,  # 作者
-        "genre": photo_text.tags,  # 标签
-        "page_count": int(photo_text.page_count)  # 页数
+        "author": photo_text['author'],  # 作者
+        "genre": photo_text['tags'],  # 标签
+        "page_count": len(photo_text['images'])  # 页数
     }
+
+    # photo_text = client.get_album_detail(photo_id)
+    #
+    # photo_content = {
+    #     "id": photo_id,
+    #     "title": photo_text.name,
+    #     # "description": photo_text['description'],
+    #     "cover": f"https://{client.domain_list[0]}/media/albums/{photo_id}.jpg",
+    #     "author": photo_text.authors,  # 作者
+    #     "genre": photo_text.tags,  # 标签
+    #     "page_count": int(photo_text.page_count)  # 页数
+    # }
 
     return render_template("album.html", photo_content=photo_content)
 
@@ -74,12 +73,27 @@ def search():
 
     search_txt = request.values.get('search')
 
-    print(page)
-    print(search_txt)
-
     photo_list = get_search_photo(search_txt, page)
 
     return render_template("search.html", photos=photo_list, page=page, search=search_txt, url='/search/photos')
+
+
+@app.route("/favorites", methods=['POST', "GET"])
+def favorites():
+    if "page" in request.values:
+        page: int = int(request.values.get("page"))
+    else:
+        page: int = 1
+
+    try:
+        photo_list = get_favorites_photo(page)
+
+    except ResponseUnexpectedException:
+        return "您还未登陆"
+    except:
+        return "∑(っ°Д°;)っ卧槽，报错了"
+
+    return render_template("search.html", photos=photo_list, page=page, url='/favorites')
 
 
 @app.route("/photo/get_photos", methods=['POST', "GET"])
@@ -106,6 +120,20 @@ def get_search_photo(tag: str, page: int) -> List[dict]:
     photos_title_id_list = []
 
     for i in client.search_site(tag, page):
+        print(i)
+        photos_title_id_list.append({
+            'id': i[0],
+            'title': i[1],
+            'cover': f"https://{client.domain_list[0]}/media/albums/{i[0]}.jpg"
+        })
+
+    return photos_title_id_list
+
+
+def get_favorites_photo(page: int) -> List[dict]:
+    photos_title_id_list = []
+
+    for i in client.favorite_folder(page):
         photos_title_id_list.append({
             'id': i[0],
             'title': i[1],
